@@ -1,0 +1,34 @@
+{
+  "name": "wasm-opencc",
+  "version": "1.0.0",
+  "description": "OpenCC compiled by Emscripten so that you can run it in browsers.",
+  "author": "oyyd <oyydoibh@gmail.com>",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "node scripts/generate",
+    "build_lib": "babel src --out-dir lib",
+    "build_bundle": "webpack",
+    "watch_bundle": "webpack -w",
+    "concat": "node scripts/concat",
+    "build": "npm run generate && npm run build_lib && npm run build_bundle && npm run concat"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "package.json",
+    "README.md"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "imports-loader": "^0.8.0",
+    "jest": "^23.6.0",
+    "uglifyjs-webpack-plugin": "^2.0.0",
+    "webpack": "^4.19.0",
+    "webpack-cli": "^3.1.0"
+  }
+}

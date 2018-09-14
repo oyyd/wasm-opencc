@@ -37,17 +37,9 @@ static DictEntry* ParseKeyValues(const char* buff, size_t lineNum) {
 
 class Wasm {
 public:
-  Wasm() {
-    // 1. Create a Segmentation/MaxMatchSegmentation.
-    //   a. Need a Dict/DictGroup.
-    //      x. Need a Lexicon
-    // 2. Create a Convert.
-    // 3. Create a Converter.
-  }
+  Wasm() {}
 
-  ~Wasm() {
-    //
-  }
+  ~Wasm() {}
 
   // TODO: Remove this.
   void CreateDictFromStringLine_(std::string line) {
@@ -156,8 +148,3 @@ EMSCRIPTEN_BINDINGS(wasm) {
       .function("pushConversion_", &Wasm::PushConversion_)
       .function("convert", &Wasm::Convert);
 }
-
-// int main() {
-//   //
-//   return 0;
-// }

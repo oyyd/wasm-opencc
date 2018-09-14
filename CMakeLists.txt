@@ -108,16 +108,11 @@ install(
 
 if (EMSCRIPTEN)
   add_definitions(
-    --embed-file "${CMAKE_CURRENT_LIST_DIR}/data/config@/"
-    --embed-file "${CMAKE_CURRENT_LIST_DIR}/data/dictionary/@/"
-    # -s DISABLE_EXCEPTION_CATCHING=0
     -s WASM=0
   )
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --bind")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s WASM=0")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s DISABLE_EXCEPTION_CATCHING=0")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --embed-file ${CMAKE_CURRENT_LIST_DIR}/data/config@/")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --embed-file ${CMAKE_CURRENT_LIST_DIR}/data/dictionary/@/")
 endif()
 
 if (EMSCRIPTEN)
