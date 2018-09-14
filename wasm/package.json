@@ -1,0 +1,52 @@
+{
+  "name": "wasm-opencc",
+  "version": "1.0.0",
+  "description":
+    "OpenCC compiled by Emscripten so that you can run it in browsers.",
+  "author": "oyyd <oyydoibh@gmail.com>",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest",
+    "generate": "node scripts/generate",
+    "build_node": "babel src --out-dir lib",
+    "build_browser": "webpack && node scripts/concat",
+    "build":
+      "npm run generate && npm run build_node && npm run build_browser"
+  },
+  "files": ["generated", "lib", "package.json", "README.md"],
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "imports-loader": "^0.8.0",
+    "jest": "^23.6.0",
+    "uglifyjs-webpack-plugin": "^2.0.0",
+    "webpack": "^4.19.0",
+    "webpack-cli": "^3.1.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "jest": true
+    },
+    "extends": "airbnb-base",
+    "rules": {
+      "semi": [2, "never"],
+      "arrow-parens": 0,
+      "global-require": 0,
+      "no-underscore-dangle": 0,
+      "no-param-reassign": 0,
+      "import/prefer-default-export": 0
+    }
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "opencc-asm"
+    ],
+    "verbose": true,
+    "testMatch": ["**/src/**/__tests__/**/*.spec.js"]
+  }
+}
