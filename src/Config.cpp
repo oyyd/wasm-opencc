@@ -189,7 +189,7 @@ public:
     throw FileNotFound(fileName);
   }
 };
-};
+}; // namespace opencc
 
 Config::Config() : internal(new ConfigInternal()) {}
 

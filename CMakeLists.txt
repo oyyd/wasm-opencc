@@ -106,8 +106,31 @@ install(
 
 ######## Compiler flags
 
+if (EMSCRIPTEN)
+  add_definitions(
+    --embed-file "${CMAKE_CURRENT_LIST_DIR}/data/config@/"
+    --embed-file "${CMAKE_CURRENT_LIST_DIR}/data/dictionary/@/"
+    # -s DISABLE_EXCEPTION_CATCHING=0
+    -s WASM=0
+  )
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --bind")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s WASM=0")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s DISABLE_EXCEPTION_CATCHING=0")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --embed-file ${CMAKE_CURRENT_LIST_DIR}/data/config@/")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --embed-file ${CMAKE_CURRENT_LIST_DIR}/data/dictionary/@/")
+endif()
+
+if (EMSCRIPTEN)
+  add_definitions(
+    -DPKGDATADIR=""
+  )
+else()
+  add_definitions(
+    -DPKGDATADIR="${DIR_SHARE_OPENCC}"
+  )
+endif()
+
 add_definitions(
-  -DPKGDATADIR="${DIR_SHARE_OPENCC}"
   -DLOCALEDIR="${DIR_SHARE_LOCALE}"
   -DVERSION="${OPENCC_VERSION}"
   -DPACKAGE_NAME="${PACKAGE_NAME}"
@@ -118,7 +141,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     -std=c++11
     -Wall
   )
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
   if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-O0 -g3)
   endif ()
@@ -155,7 +177,7 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(doc)
-add_subdirectory(data)
+# add_subdirectory(data)
 add_subdirectory(test)
 
 ######## Testing

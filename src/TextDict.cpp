@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#include "Lexicon.hpp"
 #include "TextDict.hpp"
+#include "Lexicon.hpp"
 
 using namespace opencc;
 
