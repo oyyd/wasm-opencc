@@ -28,18 +28,26 @@ function getByFetch(sourceName) {
   })
 }
 
-function getSource(proxy, sourceName_) {
+function getSource(proxy, files, sourceName_) {
   const sourceName = IS_NODE ? sourceName_ : `dict/${sourceName_}`
 
+  if (files[sourceName_]) {
+    return files[sourceName_]
+  }
+
+  let p
+
   if (typeof proxy === 'function') {
-    return proxy(sourceName)
+    p = proxy(sourceName)
+  } else if (IS_NODE) {
+    p = getByFs(sourceName)
+  } else {
+    p = getByFetch(sourceName)
   }
 
-  if (IS_NODE) {
-    return getByFs(sourceName)
-  }
+  files[sourceName_] = p
 
-  return getByFetch(sourceName)
+  return p
 }
 
 class DictSource {
@@ -65,14 +73,15 @@ class DictSource {
     let segmentationString
     const convertionStrings = []
 
-    // TODO: Cache results.
     return new Promise((resolve, reject) => {
       const config = CONFIG[this.sourceName]
       const { segmentation, convertionChain } = parse(config)
 
+      // TODO: refactor
+      const files = {}
       const tasks = []
 
-      const getSegmentation = getSource(proxy, segmentation).then(str => {
+      const getSegmentation = getSource(proxy, files, segmentation).then(str => {
         segmentationString = str
       })
 
@@ -85,7 +94,7 @@ class DictSource {
           convertionStrings.push(list)
 
           item.forEach(source => {
-            const p = getSource(proxy, source).then(str => {
+            const p = getSource(proxy, files, source).then(str => {
               list.push(str)
             })
             tasks.push(p)
@@ -93,7 +102,7 @@ class DictSource {
           return
         }
 
-        const p = getSource(proxy, item).then(str => {
+        const p = getSource(proxy, files, item).then(str => {
           convertionStrings.push(str)
         })
         tasks.push(p)

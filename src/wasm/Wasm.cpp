@@ -1,4 +1,3 @@
-// TODO: Add memory tests.
 #include "ConversionChain.hpp"
 #include "Converter.hpp"
 #include "DictGroup.hpp"

@@ -38,18 +38,26 @@ function getByFetch(sourceName) {
   });
 }
 
-function getSource(proxy, sourceName_) {
+function getSource(proxy, files, sourceName_) {
   var sourceName = IS_NODE ? sourceName_ : 'dict/' + sourceName_;
 
+  if (files[sourceName_]) {
+    return files[sourceName_];
+  }
+
+  var p = void 0;
+
   if (typeof proxy === 'function') {
-    return proxy(sourceName);
+    p = proxy(sourceName);
+  } else if (IS_NODE) {
+    p = getByFs(sourceName);
+  } else {
+    p = getByFetch(sourceName);
   }
 
-  if (IS_NODE) {
-    return getByFs(sourceName);
-  }
+  files[sourceName_] = p;
 
-  return getByFetch(sourceName);
+  return p;
 }
 
 var DictSource = function () {
@@ -85,7 +93,6 @@ var DictSource = function () {
       var segmentationString = void 0;
       var convertionStrings = [];
 
-      // TODO: Cache results.
       return new Promise(function (resolve, reject) {
         var config = CONFIG[_this.sourceName];
 
@@ -93,9 +100,13 @@ var DictSource = function () {
             segmentation = _parse.segmentation,
             convertionChain = _parse.convertionChain;
 
+        // TODO: refactor
+
+
+        var files = {};
         var tasks = [];
 
-        var getSegmentation = getSource(proxy, segmentation).then(function (str) {
+        var getSegmentation = getSource(proxy, files, segmentation).then(function (str) {
           segmentationString = str;
         });
 
@@ -108,7 +119,7 @@ var DictSource = function () {
             convertionStrings.push(list);
 
             item.forEach(function (source) {
-              var p = getSource(proxy, source).then(function (str) {
+              var p = getSource(proxy, files, source).then(function (str) {
                 list.push(str);
               });
               tasks.push(p);
@@ -116,7 +127,7 @@ var DictSource = function () {
             return;
           }
 
-          var p = getSource(proxy, item).then(function (str) {
+          var p = getSource(proxy, files, item).then(function (str) {
             convertionStrings.push(str);
           });
           tasks.push(p);

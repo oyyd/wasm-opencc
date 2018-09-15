@@ -7,12 +7,11 @@ function ready() {
 }
 
 const index = {
+  ready,
   Converter,
   DictSource,
 }
 
 Object.assign(Module, index)
-
-index.ready = ready
 
 module.exports = index

@@ -13,12 +13,11 @@ function ready() {
 }
 
 var index = {
+  ready: ready,
   Converter: Converter,
   DictSource: DictSource
 };
 
 Object.assign(Module, index);
-
-index.ready = ready;
 
 module.exports = index;

@@ -29,7 +29,6 @@ var Module = _defineProperty({
 }, EMBIND_MODULE_NAME, {
   // `onRuntimeInitialized` won't be called on Node.
   onRuntimeInitialized: function onRuntimeInitialized() {
-    console.log('Module.ready_', Module.ready_);
     Module.ready_ = true;
     ready(this);
   }

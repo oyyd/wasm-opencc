@@ -23,7 +23,6 @@ const Module = {
   [EMBIND_MODULE_NAME]: {
     // `onRuntimeInitialized` won't be called on Node.
     onRuntimeInitialized: function() {
-      console.log('Module.ready_', Module.ready_)
       Module.ready_ = true
       ready(this)
     },
