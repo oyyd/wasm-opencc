@@ -1,4 +1,4 @@
 include_directories(..)
 
-add_executable(asm Wasm.cpp)
-target_link_libraries(asm libopencc)
+add_executable(opencc-asm Wasm.cpp)
+target_link_libraries(opencc-asm libopencc)

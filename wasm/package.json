@@ -15,7 +15,7 @@
     "build":
       "npm run generate && npm run build_lib && npm run build_bundle && npm run concat"
   },
-  "files": ["lib", "package.json", "README.md"],
+  "files": ["generated", "lib", "package.json", "README.md"],
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",

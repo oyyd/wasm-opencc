@@ -5,7 +5,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var config = require('../generated/config');
-var Module = require('./Module');
+var M = require('./Module');
 
 var Converter = function () {
   function Converter() {
@@ -18,23 +18,21 @@ var Converter = function () {
   }, {
     key: 'createFromDictsString',
     value: function createFromDictsString(segmentationStrings, convertionStrings) {
-      var _this = this;
-
-      if (!Module.isReady()) {
+      if (!M.isReady()) {
         throw new Error('Try to create a Converter but the script is not ready.');
       }
 
-      var wasmConverter = new Module.Wasm();
+      var wasmConverter = new M.Wasm();
 
       segmentationStrings.forEach(function (str) {
-        _this.wasmConverter.pushSegmentation(str);
+        wasmConverter.pushSegmentation(str);
       });
 
       convertionStrings.forEach(function (str) {
-        _this.wasmConverter.pushConversion(str);
+        wasmConverter.pushConversion(str);
       });
 
-      this.wasmConverter.createConverter();
+      wasmConverter.createConverter();
 
       this.wasmConverter = wasmConverter;
     }

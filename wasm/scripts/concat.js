@@ -3,6 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const { writeFile } = require('./merge_config')
+const { JS_FILE_NAME } = require('./generate')
 
 async function getFileContent(filePath) {
   return new Promise((resolve, reject) => {
@@ -19,7 +20,7 @@ async function getFileContent(filePath) {
 }
 
 async function main() {
-  const targetFile = path.resolve(__dirname, '../dist/asm.js')
+  const targetFile = path.resolve(__dirname, `../dist/${JS_FILE_NAME}`)
   const asmContent = await getFileContent(path.resolve(__dirname, '../generated/asm.js'))
   const content = await getFileContent(targetFile)
 

@@ -1,13 +1,9 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 // TODO: babel polyfill
 // `Module` for Embind.
 var _require = require('./utils'),
     IS_NODE = _require.IS_NODE;
-
-console.log('IS_NODE', IS_NODE);
 
 var ready = null;
 
@@ -30,16 +26,13 @@ var Module = {
   }
 };
 
-if (IS_NODE) {
-  console.log("require('../generated/asm').Wasm", require('../generated/asm').Wasm);
-  Object.assign(Module, {
-    // TODO: Make sure this won't be bundled.
-    Wasm: require('../generated/asm').Wasm
-  });
-}
-
-if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
+if (!IS_NODE) {
   window.Module = Module;
+} else {
+  var M = require('../generated/asm');
+  Object.assign(Module, {
+    Wasm: M.Wasm
+  });
 }
 
 module.exports = Module;

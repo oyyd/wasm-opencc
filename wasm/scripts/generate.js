@@ -1,8 +1,9 @@
 const path = require('path')
 const fs = require('fs')
-const { ensureDir, copyFile, DIST_FOLDER, mergeConfig, DIR_FOLDER } = require('./merge_config')
+const { mergeConfig, DIR_FOLDER } = require('./merge_config')
+const { ensureDir, copyFile, DIST_FOLDER } = require('./copy_dicts')
 
-const JS_FILE_NAME = 'asm.js'
+const JS_FILE_NAME = 'opencc-asm.js'
 const MEM_FILE_NAME = `${JS_FILE_NAME}.mem`
 
 const FILE_NAMES = [
@@ -37,6 +38,10 @@ async function main() {
   await mergeConfig()
   await copyBuiltFiles()
   await copyMemFile()
+}
+
+module.exports = {
+  JS_FILE_NAME,
 }
 
 if (module === require.main) {

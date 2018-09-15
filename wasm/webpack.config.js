@@ -2,6 +2,7 @@
 // so that we concat wasm files directly.
 const webpack = require('webpack');
 const path = require('path');
+const { JS_FILE_NAME } = require('./scripts/generate')
 
 module.exports = {
   mode: 'production',
@@ -10,10 +11,9 @@ module.exports = {
       Module: path.resolve(__dirname, './src/Module'),
     },
   },
-  // mode: 'production',
   entry: path.resolve(__dirname, './src/index.js'),
   output: {
-    filename: 'asm.js',
+    filename: JS_FILE_NAME,
     path: path.resolve(__dirname, './dist'),
   },
   externals: ['fs'],

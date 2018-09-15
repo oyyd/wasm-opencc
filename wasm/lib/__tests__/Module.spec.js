@@ -1,10 +1,12 @@
 'use strict';
 
-var _require = require('../index'),
-    ready = _require.ready;
+var _require = require('../Module'),
+    isReady = _require.isReady,
+    readyPromise = _require.readyPromise;
 
 describe('Module', function () {
   it('should resolve the promise when ready', function (done) {
-    ready().then(done);
+    expect(isReady()).toBe(true);
+    readyPromise.then(done);
   });
 });

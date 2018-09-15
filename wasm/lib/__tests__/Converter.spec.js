@@ -23,7 +23,6 @@ describe('Converter', function () {
   describe('createFromDictsString', function () {
     it('should create wasmConverter by passing strings', function (done) {
       ready().then(function () {
-        console.log("ENTER");
         var instance = new Converter();
         instance.createFromDictsString(SEGS, CONVERTIONS);
         expect(instance.convert('冬暖夏凉'), '冬暖夏涼');
