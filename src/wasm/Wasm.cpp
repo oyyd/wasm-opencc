@@ -41,21 +41,37 @@ public:
 
   ~Wasm() {}
 
-  // TODO: Remove this.
-  void CreateDictFromStringLine_(std::string line) {
-    DictEntry* entry = ParseKeyValues(line.c_str(), line.size());
-    delete entry;
+  void PushSegmentation(std::string text) {
+    textDictList.push_back(CreateTextDict(text));
   }
 
-  void CreateDictFromString_(std::string text) {
-    this->CreateDictFromString(text);
+  void PushConversion(std::string text) {
+    DictPtr dict;
+    dict = this->CreateTextDict(text);
+    ConversionPtr conversion(new Conversion(dict));
+    conversions.push_back(conversion);
   }
 
-  void PushTextDict_(std::string text) { this->PushTextDict(text); }
+  void CreateConverter() {
+    if (textDictList.size() == 0) {
+      throw std::runtime_error(
+          "'Wasm.CreateConverter' needs at least one dict text.");
+    }
 
-  void CreateConverter_() { this->CreateConverter(); }
+    if (conversions.size() == 0) {
+      throw std::runtime_error(
+          "'Wasm.CreateConverter' needs at least one conversion.");
+    }
 
-  void PushConversion_(std::string text) { this->PushConversion(text); }
+    DictPtr dict = DictGroupPtr(new DictGroup(textDictList));
+    SegmentationPtr segmentation =
+        SegmentationPtr(new MaxMatchSegmentation(dict));
+    ConversionChainPtr chain(new ConversionChain(conversions));
+
+    // TODO:
+    std::string name = "Simplified Chinese to Traditional Chinese";
+    converter = ConverterPtr(new Converter(name, segmentation, chain));
+  }
 
   std::string Convert(std::string text) {
     if (!converter) {
@@ -101,38 +117,6 @@ private:
     return TextDictPtr(textDict);
   }
 
-  void PushTextDict(std::string text) {
-    textDictList.push_back(CreateTextDict(text));
-  }
-
-  void PushConversion(std::string text) {
-    DictPtr dict;
-    dict = this->CreateTextDict(text);
-    ConversionPtr conversion(new Conversion(dict));
-    conversions.push_back(conversion);
-  }
-
-  void CreateConverter() {
-    if (textDictList.size() == 0) {
-      throw std::runtime_error(
-          "'Wasm.CreateConverter' needs at least one dict text.");
-    }
-
-    if (conversions.size() == 0) {
-      throw std::runtime_error(
-          "'Wasm.CreateConverter' needs at least one conversion.");
-    }
-
-    DictPtr dict = DictGroupPtr(new DictGroup(textDictList));
-    SegmentationPtr segmentation =
-        SegmentationPtr(new MaxMatchSegmentation(dict));
-    ConversionChainPtr chain(new ConversionChain(conversions));
-
-    // TODO:
-    std::string name = "Simplified Chinese to Traditional Chinese";
-    converter = ConverterPtr(new Converter(name, segmentation, chain));
-  }
-
   std::list<DictPtr> textDictList;
   std::list<ConversionPtr> conversions;
   ConverterPtr converter;
@@ -141,10 +125,8 @@ private:
 EMSCRIPTEN_BINDINGS(wasm) {
   class_<Wasm>("Wasm")
       .constructor<>()
-      .function("createDictFromStringLine_", &Wasm::CreateDictFromStringLine_)
-      .function("createDictFromString_", &Wasm::CreateDictFromString_)
-      .function("createTextDict_", &Wasm::PushTextDict_)
-      .function("createConverter_", &Wasm::CreateConverter_)
-      .function("pushConversion_", &Wasm::PushConversion_)
+      .function("pushSegmentation", &Wasm::PushSegmentation)
+      .function("pushConversion", &Wasm::PushConversion)
+      .function("createConverter", &Wasm::CreateConverter)
       .function("convert", &Wasm::Convert);
 }

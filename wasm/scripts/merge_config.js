@@ -5,16 +5,22 @@ const DIR_FOLDER = path.resolve(__dirname, '../generated/')
 const PREFIX = path.resolve(__dirname, '../../data/config')
 const TARGET_PATH = path.resolve(DIR_FOLDER, './config.js')
 
-async function getConfigFileNames() {
+async function getFilesInAFolder(dirpath) {
   return new Promise((resolve, reject) => {
-    fs.readdir(PREFIX, (err, files) => {
+    fs.readdir(dirpath, (err, files) => {
       if (err) {
         reject(err)
         return
       }
 
-      resolve(files.filter(i => path.extname(i) === '.json'))
+      resolve(files)
     })
+  })
+}
+
+async function getConfigFileNames() {
+  return getFilesInAFolder(PREFIX).then(files => {
+    return files.filter(i => path.extname(i) === '.json')
   })
 }
 
@@ -73,6 +79,7 @@ module.exports = {
   DIR_FOLDER,
   mergeConfig: main,
   writeFile,
+  getFilesInAFolder,
 }
 
 if (module === require.main) {

@@ -1,7 +1,13 @@
 'use strict';
 
 var Module = require('./Module');
-var config = require('../generated/config');
+var Converter = require('./Converter');
 
-// console.log('Module', Module)
-console.log('config', config);
+function ready() {
+  return Module.readyPromise;
+}
+
+module.exports = {
+  ready: ready,
+  Converter: Converter
+};

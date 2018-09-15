@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const { mergeConfig, DIR_FOLDER } = require('./merge_config')
+const { ensureDir, copyFile, DIST_FOLDER, mergeConfig, DIR_FOLDER } = require('./merge_config')
 
 const JS_FILE_NAME = 'asm.js'
 const MEM_FILE_NAME = `${JS_FILE_NAME}.mem`
@@ -11,27 +11,6 @@ const FILE_NAMES = [
 ]
 
 const BUILT_FILE_PATH = path.resolve(__dirname, `../../build/rel/src/wasm/`)
-const DIST_FOLDER = path.resolve(__dirname, '../dist')
-
-async function ensureDir() {
-  return new Promise((resovle) => {
-    fs.mkdir(DIR_FOLDER, () => {
-      resovle()
-    })
-  })
-}
-
-async function copyFile(file, targetPath) {
-  return new Promise((resolve, reject) => {
-    fs.copyFile(file, targetPath, (err) => {
-      if (err) {
-        reject(err)
-        return
-      }
-      resolve()
-    })
-  })
-}
 
 async function copyBuiltFile(fileName) {
   const file = path.resolve(BUILT_FILE_PATH, fileName)
@@ -54,7 +33,7 @@ async function copyMemFile() {
 }
 
 async function main() {
-  await ensureDir()
+  await ensureDir(DIR_FOLDER)
   await mergeConfig()
   await copyBuiltFiles()
   await copyMemFile()

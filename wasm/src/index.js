@@ -1,5 +1,11 @@
 const Module = require('./Module')
-const config = require('../generated/config')
+const Converter = require('./Converter')
 
-// console.log('Module', Module)
-console.log('config', config)
+function ready() {
+  return Module.readyPromise
+}
+
+module.exports = {
+  ready,
+  Converter,
+}
