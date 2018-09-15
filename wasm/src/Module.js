@@ -26,7 +26,7 @@ const Module = {
 if (!IS_NODE) {
   window.Module = Module
 } else {
-  const M = require('../generated/asm')
+  const M = require('../generated/opencc-asm.js')
   Object.assign(Module, {
     Wasm: M.Wasm,
   })

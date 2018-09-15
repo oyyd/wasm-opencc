@@ -21,7 +21,7 @@ async function getFileContent(filePath) {
 
 async function main() {
   const targetFile = path.resolve(__dirname, `../dist/${JS_FILE_NAME}`)
-  const asmContent = await getFileContent(path.resolve(__dirname, '../generated/asm.js'))
+  const asmContent = await getFileContent(path.resolve(__dirname, `../generated/${JS_FILE_NAME}`))
   const content = await getFileContent(targetFile)
 
   return writeFile(targetFile, `${content};\n// WASCM_CONTENT\n${asmContent};`)

@@ -29,7 +29,7 @@ var Module = {
 if (!IS_NODE) {
   window.Module = Module;
 } else {
-  var M = require('../generated/asm');
+  var M = require('../generated/opencc-asm.js');
   Object.assign(Module, {
     Wasm: M.Wasm
   });
