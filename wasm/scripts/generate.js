@@ -2,8 +2,9 @@ const path = require('path')
 const fs = require('fs')
 const { writeFile, getFile, mergeConfig, DIR_FOLDER } = require('./merge_config')
 const { ensureDir, copyFile, DIST_FOLDER } = require('./copy_dicts')
+const { JS_FILE_NAME, concatFile } = require('./concat')
+const { EMBIND_MODULE_NAME, NAME_ON_WINDOW } = require('../src/Module')
 
-const JS_FILE_NAME = 'opencc-asm.js'
 const MEM_FILE_NAME = `${JS_FILE_NAME}.mem`
 
 const FILE_NAMES = [
@@ -34,7 +35,7 @@ async function wrapASMFile() {
   const file = path.resolve(DIR_FOLDER, JS_FILE_NAME)
   const asmContent = await getFile(file)
 
-  return writeFile(file, `(function(window) { ${asmContent} })(typeof global === undefined ? window : undefined);`)
+  return writeFile(file, `(function(window) { var Module = typeof window === 'undefined' ? undefined : window.${NAME_ON_WINDOW}.${EMBIND_MODULE_NAME}; ${asmContent} })(!(typeof global !== 'undefined' && typeof process !== 'undefined' && process.version) ? window : undefined);`)
 }
 
 async function copyMemFile() {
@@ -56,7 +57,5 @@ module.exports = {
 }
 
 if (module === require.main) {
-  main().catch((err) => setTimeout(() => {
-    throw err
-  }))
+  main().catch((err) => console.error(err.stack()))
 }

@@ -3,7 +3,8 @@
 const fs = require('fs')
 const path = require('path')
 const { writeFile } = require('./merge_config')
-const { JS_FILE_NAME } = require('./generate')
+
+const JS_FILE_NAME = 'opencc-asm.js'
 
 async function getFileContent(filePath) {
   return new Promise((resolve, reject) => {
@@ -27,4 +28,11 @@ async function main() {
   return writeFile(targetFile, `${content};\n// WASCM_CONTENT\n ${asmContent};`)
 }
 
-main()
+module.exports = {
+  concatFile: main,
+  JS_FILE_NAME,
+}
+
+if (module === require.main) {
+  main()
+}

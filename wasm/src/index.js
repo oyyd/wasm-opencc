@@ -6,8 +6,13 @@ function ready() {
   return Module.readyPromise
 }
 
-module.exports = {
-  ready,
+const index = {
   Converter,
   DictSource,
 }
+
+Object.assign(Module, index)
+
+index.ready = ready
+
+module.exports = index

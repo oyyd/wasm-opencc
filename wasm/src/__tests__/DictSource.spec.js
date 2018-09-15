@@ -23,4 +23,27 @@ describe('DictSource', () => {
       })
     })
   })
+
+  it('should set getSource implmentation by setDictProxy', () => {
+    const sourceName = 's2t.json'
+    const dictSource = new DictSource(sourceName)
+    let called = 0
+
+    dictSource.setDictProxy((name) => {
+      called += 1
+      return `${name} content`
+    })
+
+    dictSource.get().then(([a, b]) => {
+      expect(called).toBe(3)
+      expect(typeof a).toBe('string')
+      expect(Array.isArray(b))
+
+      done()
+    }).catch(err => {
+      setTimeout(() => {
+        throw err
+      })
+    })
+  })
 })

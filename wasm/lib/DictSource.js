@@ -2,62 +2,49 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-// TODO: Allow user to proxy fetch function.
-var getByFs = function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(sourceName) {
-    var fs, path, NODE_DICT_PATH;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            fs = rquire('fs');
-            path = require('path');
-            // TODO: Pass this from outside.
-
-            NODE_DICT_PATH = path.resolve(__dirname, '../generated/dict');
-            return _context.abrupt('return', new Promise(function (resolve, reject) {
-              fs.readFile(path.resolve(NODE_DICT_PATH, sourceName), function (err, content) {
-                if (err) {
-                  reject(err);
-                  return;
-                }
-
-                resolve(content);
-              });
-            }));
-
-          case 4:
-          case 'end':
-            return _context.stop();
-        }
-      }
-    }, _callee, this);
-  }));
-
-  return function getByFs(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var _require = require('./utils'),
     IS_NODE = _require.IS_NODE;
 
-var config = require('../generated/config');
+var CONFIG = require('../generated/config');
 
 var _require2 = require('./ConfigParser'),
     parse = _require2.parse;
 
-var SOURCE_KEYS = Object.keys(config);
+var SOURCE_KEYS = Object.keys(CONFIG);
 
-function getByFetch() {
-  // TODO:
+function getByFs(sourceName) {
+  var fs = require('fs');
+  var path = require('path');
+  // TODO: Pass this from outside.
+  var NODE_DICT_PATH = path.resolve(__dirname, '../generated/dict');
+
+  return new Promise(function (resolve, reject) {
+    fs.readFile(path.resolve(NODE_DICT_PATH, sourceName), function (err, content) {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve(content.toString('utf8'));
+    });
+  });
 }
 
-function getSource(sourceName) {
+function getByFetch(sourceName) {
+  return fetch(sourceName).then(function (res) {
+    return res.text();
+  });
+}
+
+function getSource(proxy, sourceName_) {
+  var sourceName = IS_NODE ? sourceName_ : 'dict/' + sourceName_;
+
+  if (typeof proxy === 'function') {
+    return proxy(sourceName);
+  }
+
   if (IS_NODE) {
     return getByFs(sourceName);
   }
@@ -76,29 +63,69 @@ var DictSource = function () {
     }
 
     this.sourceName = sourceName;
+    this.proxy = null;
   }
 
   _createClass(DictSource, [{
+    key: 'setDictProxy',
+    value: function setDictProxy(proxy) {
+      if (typeof proxy !== 'function' && proxy !== null) {
+        throw new Error('setDictProxy expect a function or null argument');
+      }
+
+      this.proxy;
+    }
+  }, {
     key: 'get',
     value: function get() {
+      var _this = this;
+
+      var proxy = this.proxy;
+
+      var segmentationString = void 0;
+      var convertionStrings = [];
+
       // TODO: Cache results.
       return new Promise(function (resolve, reject) {
-        var config = config[sourceName];
+        var config = CONFIG[_this.sourceName];
 
         var _parse = parse(config),
             segmentation = _parse.segmentation,
             convertionChain = _parse.convertionChain;
-        // ignore .ocd
 
-        var segmentationStrings = [];
-        var convertionStrings = [];
+        var tasks = [];
 
-        // TODO:
-        Promise.all([segmentation, convertion]);
+        var getSegmentation = getSource(proxy, segmentation).then(function (str) {
+          segmentationString = str;
+        });
 
-        resolve({
-          segmentationStrings: segmentationStrings,
-          convertionStrings: convertionStrings
+        tasks.push(getSegmentation);
+
+        convertionChain.forEach(function (item) {
+          if (Array.isArray(item)) {
+            var list = [];
+
+            convertionStrings.push(list);
+
+            item.forEach(function (source) {
+              var p = getSource(proxy, source).then(function (str) {
+                list.push(str);
+              });
+              tasks.push(p);
+            });
+            return;
+          }
+
+          var p = getSource(proxy, item).then(function (str) {
+            convertionStrings.push(str);
+          });
+          tasks.push(p);
+        });
+
+        Promise.all(tasks).then(function () {
+          resolve([segmentationString, convertionStrings]);
+        }).catch(function (err) {
+          reject(err);
         });
       });
     }

@@ -6,14 +6,12 @@
   "author": "oyyd <oyydoibh@gmail.com>",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "npm run build && jest",
     "generate": "node scripts/generate",
-    "build_lib": "babel src --out-dir lib",
-    "build_bundle": "webpack",
-    "watch_bundle": "webpack -w",
-    "concat": "node scripts/concat",
+    "build_node": "babel src --out-dir lib",
+    "build_browser": "webpack && node scripts/concat",
     "build":
-      "npm run generate && npm run build_lib && npm run build_bundle && npm run concat"
+      "npm run generate && npm run build_node && npm run build_browser"
   },
   "files": ["generated", "lib", "package.json", "README.md"],
   "license": "MIT",

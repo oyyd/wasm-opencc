@@ -4,7 +4,6 @@ const { parse } = require('./ConfigParser')
 
 const SOURCE_KEYS = Object.keys(CONFIG)
 
-// TODO: Allow user to proxy fetch function.
 function getByFs(sourceName) {
   const fs = require('fs')
   const path = require('path')
@@ -23,11 +22,19 @@ function getByFs(sourceName) {
   })
 }
 
-function getByFetch() {
-  // TODO:
+function getByFetch(sourceName) {
+  return fetch(sourceName).then(res => {
+    return res.text()
+  })
 }
 
-function getSource(sourceName) {
+function getSource(proxy, sourceName_) {
+  const sourceName = IS_NODE ? sourceName_ : `dict/${sourceName_}`
+
+  if (typeof proxy === 'function') {
+    return proxy(sourceName)
+  }
+
   if (IS_NODE) {
     return getByFs(sourceName)
   }
@@ -42,9 +49,19 @@ class DictSource {
     }
 
     this.sourceName = sourceName
+    this.proxy = null
+  }
+
+  setDictProxy(proxy) {
+    if (typeof proxy !== 'function' && proxy !== null) {
+      throw new Error('setDictProxy expect a function or null argument')
+    }
+
+    this.proxy
   }
 
   get() {
+    const { proxy } = this
     let segmentationString
     const convertionStrings = []
 
@@ -55,7 +72,7 @@ class DictSource {
 
       const tasks = []
 
-      const getSegmentation = getSource(segmentation).then(str => {
+      const getSegmentation = getSource(proxy, segmentation).then(str => {
         segmentationString = str
       })
 
@@ -68,7 +85,7 @@ class DictSource {
           convertionStrings.push(list)
 
           item.forEach(source => {
-            const p = getSource(source).then(str => {
+            const p = getSource(proxy, source).then(str => {
               list.push(str)
             })
             tasks.push(p)
@@ -76,7 +93,7 @@ class DictSource {
           return
         }
 
-        const p = getSource(item).then(str => {
+        const p = getSource(proxy, item).then(str => {
           convertionStrings.push(str)
         })
         tasks.push(p)

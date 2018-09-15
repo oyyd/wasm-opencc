@@ -18,7 +18,7 @@ function createFromDictsString_(
 ) {
   checkReady();
 
-  const wasmConverter = new M.Wasm();
+  const wasmConverter = new M[M.EMBIND_MODULE_NAME].Wasm();
 
   wasmConverter.pushSegmentation(segmentationString);
 

@@ -17,17 +17,24 @@ function checkReady() {
   }
 }
 
-function createFromSource_() {}
-
 function createFromDictsString_(converter, segmentationString, convertionStrings) {
   checkReady();
 
-  var wasmConverter = new M.Wasm();
+  var wasmConverter = new M[M.EMBIND_MODULE_NAME].Wasm();
 
   wasmConverter.pushSegmentation(segmentationString);
 
-  convertionStrings.forEach(function (str) {
-    wasmConverter.pushConversion(str);
+  convertionStrings.forEach(function (item) {
+    if (Array.isArray(item)) {
+      item.forEach(function (str) {
+        wasmConverter.pushConversion(str);
+      });
+      wasmConverter.createConvertionGroup();
+      return;
+    }
+
+    wasmConverter.pushConversion(item);
+    wasmConverter.createConvertionGroup();
   });
 
   wasmConverter.createConverter();
@@ -47,9 +54,6 @@ var Converter = function () {
 
     if (args.length === 2 && isValidSegmentationArg(args[0]) && isValidConvertionChainArg(args[1])) {
       createFromDictsString_.apply(undefined, [this].concat(args));
-      return;
-    } else if (args.length === 1 && typeof args[0] === 'string') {
-      createFromSource_.apply(undefined, [this].concat(args));
       return;
     }
 

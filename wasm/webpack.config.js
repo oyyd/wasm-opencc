@@ -1,3 +1,4 @@
+// Webpack build for browsers only.
 // NOTE: There are ploblems with chrome, uglifyjs, and embind
 // so that we concat wasm files directly.
 const webpack = require('webpack');
@@ -16,7 +17,15 @@ module.exports = {
     filename: JS_FILE_NAME,
     path: path.resolve(__dirname, './dist'),
   },
-  externals: ['fs'],
+  externals: [
+    'fs',
+    function(context, request, callback) {
+      if (/opencc-asm/.test(request)){
+        return callback(null, 'commonjs ' + request);
+      }
+      callback();
+    }
+  ],
   module: {
     rules: [
       {
