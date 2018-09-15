@@ -7,41 +7,56 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var config = require('../generated/config');
 var M = require('./Module');
 
+var _require = require('./ConfigParser'),
+    isValidSegmentationArg = _require.isValidSegmentationArg,
+    isValidConvertionChainArg = _require.isValidConvertionChainArg;
+
+function checkReady() {
+  if (!M.isReady()) {
+    throw new Error('Try to create a Converter but the script is not ready.');
+  }
+}
+
+function createFromSource_() {}
+
+function createFromDictsString_(converter, segmentationString, convertionStrings) {
+  checkReady();
+
+  var wasmConverter = new M.Wasm();
+
+  wasmConverter.pushSegmentation(segmentationString);
+
+  convertionStrings.forEach(function (str) {
+    wasmConverter.pushConversion(str);
+  });
+
+  wasmConverter.createConverter();
+
+  converter.wasmConverter = wasmConverter;
+}
+
 var Converter = function () {
   function Converter() {
     _classCallCheck(this, Converter);
+
+    this.checkReady = checkReady;
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (args.length === 2 && isValidSegmentationArg(args[0]) && isValidConvertionChainArg(args[1])) {
+      createFromDictsString_.apply(undefined, [this].concat(args));
+      return;
+    } else if (args.length === 1 && typeof args[0] === 'string') {
+      createFromSource_.apply(undefined, [this].concat(args));
+      return;
+    }
+
+    throw new Error('Invalid constructor arguments for Converter.');
   }
 
   _createClass(Converter, [{
-    key: 'createFromSource',
-    value: function createFromSource() {}
-  }, {
-    key: 'checkReady',
-    value: function checkReady() {
-      if (!M.isReady()) {
-        throw new Error('Try to create a Converter but the script is not ready.');
-      }
-    }
-  }, {
-    key: 'createFromDictsString',
-    value: function createFromDictsString(segmentationStrings, convertionStrings) {
-      this.checkReady();
-
-      var wasmConverter = new M.Wasm();
-
-      segmentationStrings.forEach(function (str) {
-        wasmConverter.pushSegmentation(str);
-      });
-
-      convertionStrings.forEach(function (str) {
-        wasmConverter.pushConversion(str);
-      });
-
-      wasmConverter.createConverter();
-
-      this.wasmConverter = wasmConverter;
-    }
-  }, {
     key: 'convert',
     value: function convert() {
       var _wasmConverter;

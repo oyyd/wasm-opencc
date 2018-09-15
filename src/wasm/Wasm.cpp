@@ -39,17 +39,38 @@ class Wasm {
 public:
   Wasm() {}
 
-  ~Wasm() {}
+  ~Wasm() {
+    textDictList.clear();
+    convertionDictList.clear();
+    convertions.clear();
+    converter.reset();
+  }
 
   void PushSegmentation(std::string text) {
     textDictList.push_back(CreateTextDict(text));
   }
 
-  void PushConversion(std::string text) {
+  void CreateConvertionGroup() {
+    if (convertionDictList.size() == 0) {
+      throw std::runtime_error(
+          "'Wasm.PushConversion' needs at least one dict text.");
+    }
+
     DictPtr dict;
-    dict = this->CreateTextDict(text);
+
+    if (convertionDictList.size() == 1) {
+      dict = convertionDictList.front();
+    } else {
+      dict = DictGroupPtr(new DictGroup(convertionDictList));
+    }
+
     ConversionPtr conversion(new Conversion(dict));
-    conversions.push_back(conversion);
+    convertions.push_back(conversion);
+    convertionDictList.clear();
+  }
+
+  void PushConversion(std::string text) {
+    convertionDictList.push_back(this->CreateTextDict(text));
   }
 
   void CreateConverter() {
@@ -58,7 +79,7 @@ public:
           "'Wasm.CreateConverter' needs at least one dict text.");
     }
 
-    if (conversions.size() == 0) {
+    if (convertions.size() == 0) {
       throw std::runtime_error(
           "'Wasm.CreateConverter' needs at least one conversion.");
     }
@@ -66,10 +87,10 @@ public:
     DictPtr dict = DictGroupPtr(new DictGroup(textDictList));
     SegmentationPtr segmentation =
         SegmentationPtr(new MaxMatchSegmentation(dict));
-    ConversionChainPtr chain(new ConversionChain(conversions));
+    ConversionChainPtr chain(new ConversionChain(convertions));
 
     // TODO:
-    std::string name = "Simplified Chinese to Traditional Chinese";
+    std::string name = "(NULL_WASM_TODO)";
     converter = ConverterPtr(new Converter(name, segmentation, chain));
   }
 
@@ -89,7 +110,7 @@ private:
 
   // TODO: Errors here won't be catched.
   // TODO: Test this.
-  LexiconPtr CreateDictFromString(std::string text) {
+  LexiconPtr CreateDictFromString(std::string& text) {
     const int ENTRY_BUFF_SIZE = 4096;
 
     LexiconPtr lexicon(new Lexicon);
@@ -111,14 +132,15 @@ private:
     return lexicon;
   }
 
-  DictPtr CreateTextDict(std::string text) {
+  DictPtr CreateTextDict(std::string& text) {
     LexiconPtr lex = this->CreateDictFromString(text);
     TextDict* textDict = new TextDict(lex);
     return TextDictPtr(textDict);
   }
 
   std::list<DictPtr> textDictList;
-  std::list<ConversionPtr> conversions;
+  std::list<DictPtr> convertionDictList;
+  std::list<ConversionPtr> convertions;
   ConverterPtr converter;
 };
 
@@ -127,6 +149,7 @@ EMSCRIPTEN_BINDINGS(wasm) {
       .constructor<>()
       .function("pushSegmentation", &Wasm::PushSegmentation)
       .function("pushConversion", &Wasm::PushConversion)
+      .function("createConvertionGroup", &Wasm::CreateConvertionGroup)
       .function("createConverter", &Wasm::CreateConverter)
       .function("convert", &Wasm::Convert);
 }

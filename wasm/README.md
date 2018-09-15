@@ -18,3 +18,5 @@ https://github.com/BYVoid/OpenCC#configurations-%E9%85%8D%E7%BD%AE%E6%96%87%E4%B
   - (Maybe) benchmarks
   - provide WASM=1
   - (Maybe) Compile by closure
+  - Allow user to proxy fetch function.
+  - Comparation tests

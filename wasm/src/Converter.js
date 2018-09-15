@@ -1,53 +1,75 @@
-const config = require('../generated/config')
-const M = require('./Module')
+const config = require('../generated/config');
+const M = require('./Module');
+const {
+  isValidSegmentationArg,
+  isValidConvertionChainArg,
+} = require('./ConfigParser');
+
+function checkReady() {
+  if (!M.isReady()) {
+    throw new Error('Try to create a Converter but the script is not ready.');
+  }
+}
+
+function createFromDictsString_(
+  converter,
+  segmentationString,
+  convertionStrings,
+) {
+  checkReady();
+
+  const wasmConverter = new M.Wasm();
+
+  wasmConverter.pushSegmentation(segmentationString);
+
+  convertionStrings.forEach(item => {
+    if (Array.isArray(item)) {
+      item.forEach(str => {
+        wasmConverter.pushConversion(str)
+      })
+      wasmConverter.createConvertionGroup()
+      return
+    }
+
+    wasmConverter.pushConversion(item)
+    wasmConverter.createConvertionGroup()
+  })
+
+  wasmConverter.createConverter();
+
+  converter.wasmConverter = wasmConverter;
+}
 
 class Converter {
-  constructor() {
+  constructor(...args) {
+    this.checkReady = checkReady;
 
-  }
-
-  createFromSource() {
-
-  }
-
-  checkReady() {
-    if (!M.isReady()) {
-      throw new Error('Try to create a Converter but the script is not ready.')
+    if (
+      args.length === 2 &&
+      isValidSegmentationArg(args[0]) &&
+      isValidConvertionChainArg(args[1])
+    ) {
+      createFromDictsString_(this, ...args);
+      return;
     }
-  }
 
-  createFromDictsString(segmentationStrings, convertionStrings) {
-    this.checkReady()
-
-    const wasmConverter = new M.Wasm()
-
-    segmentationStrings.forEach((str) => {
-      wasmConverter.pushSegmentation(str)
-    })
-
-    convertionStrings.forEach((str) => {
-      wasmConverter.pushConversion(str)
-    })
-
-    wasmConverter.createConverter()
-
-    this.wasmConverter = wasmConverter
+    throw new Error('Invalid constructor arguments for Converter.');
   }
 
   convert(...args) {
-    this.checkReady()
-    return this.wasmConverter.convert(...args)
+    this.checkReady();
+    return this.wasmConverter.convert(...args);
   }
 
   delete() {
     if (!this.wasmConverter) {
-      return
+      return;
     }
 
-    this.wasmConverter.delete()
+    this.wasmConverter.delete();
   }
 }
 
 module.exports = {
   Converter,
-}
+};
