@@ -16,11 +16,16 @@ var Converter = function () {
     key: 'createFromSource',
     value: function createFromSource() {}
   }, {
-    key: 'createFromDictsString',
-    value: function createFromDictsString(segmentationStrings, convertionStrings) {
+    key: 'checkReady',
+    value: function checkReady() {
       if (!M.isReady()) {
         throw new Error('Try to create a Converter but the script is not ready.');
       }
+    }
+  }, {
+    key: 'createFromDictsString',
+    value: function createFromDictsString(segmentationStrings, convertionStrings) {
+      this.checkReady();
 
       var wasmConverter = new M.Wasm();
 
@@ -35,6 +40,14 @@ var Converter = function () {
       wasmConverter.createConverter();
 
       this.wasmConverter = wasmConverter;
+    }
+  }, {
+    key: 'convert',
+    value: function convert() {
+      var _wasmConverter;
+
+      this.checkReady();
+      return (_wasmConverter = this.wasmConverter).convert.apply(_wasmConverter, arguments);
     }
   }, {
     key: 'delete',

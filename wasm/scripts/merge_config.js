@@ -24,11 +24,9 @@ async function getConfigFileNames() {
   })
 }
 
-async function getFileContent(name) {
-  const filePath = path.resolve(PREFIX, `./${name}`)
-
+async function getFile(target) {
   return new Promise((resolve, reject) => {
-    fs.readFile(filePath, {
+    fs.readFile(target, {
       encoding: 'utf8',
     }, (err, content) => {
       if (err) {
@@ -38,6 +36,11 @@ async function getFileContent(name) {
       resolve(content)
     })
   })
+}
+
+async function getFileContent(name) {
+  const filePath = path.resolve(PREFIX, `./${name}`)
+  return getFile(filePath)
 }
 
 async function getAllConfigFiles() {
@@ -80,6 +83,7 @@ module.exports = {
   mergeConfig: main,
   writeFile,
   getFilesInAFolder,
+  getFile,
 }
 
 if (module === require.main) {

@@ -6,7 +6,7 @@
   "author": "oyyd <oyydoibh@gmail.com>",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "jest",
     "generate": "node scripts/generate",
     "build_lib": "babel src --out-dir lib",
     "build_bundle": "webpack",
@@ -45,6 +45,9 @@
     }
   },
   "jest": {
+    "transformIgnorePatterns": [
+      "opencc-asm"
+    ],
     "verbose": true,
     "testMatch": ["**/src/**/__tests__/**/*.spec.js"]
   }

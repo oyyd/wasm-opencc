@@ -19,11 +19,6 @@ module.exports = {
   externals: ['fs'],
   module: {
     rules: [
-      // {
-      //   // webpack loader bug: https://github.com/webpack-contrib/expose-loader/issues/55
-      //   test: ASM_FILE,
-      //   use: 'imports-loader?Module=Module',
-      // },
       {
         test: /\.js$/,
         exclude: ['node_modules'],

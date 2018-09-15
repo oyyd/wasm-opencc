@@ -20,7 +20,7 @@ describe('Converter', () => {
       ready().then(() => {
         const instance = new Converter()
         instance.createFromDictsString(SEGS, CONVERTIONS)
-        expect(instance.convert('冬暖夏凉'), '冬暖夏涼')
+        expect(instance.convert('冬暖夏凉')).toEqual('冬暖夏涼')
         instance.delete()
         done()
       })

@@ -10,10 +10,14 @@ class Converter {
 
   }
 
-  createFromDictsString(segmentationStrings, convertionStrings) {
+  checkReady() {
     if (!M.isReady()) {
       throw new Error('Try to create a Converter but the script is not ready.')
     }
+  }
+
+  createFromDictsString(segmentationStrings, convertionStrings) {
+    this.checkReady()
 
     const wasmConverter = new M.Wasm()
 
@@ -28,6 +32,11 @@ class Converter {
     wasmConverter.createConverter()
 
     this.wasmConverter = wasmConverter
+  }
+
+  convert(...args) {
+    this.checkReady()
+    return this.wasmConverter.convert(...args)
   }
 
   delete() {
