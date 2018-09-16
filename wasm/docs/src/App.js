@@ -1,6 +1,6 @@
-import React from 'react'
-import PlayGround from './PlayGround'
-import Docs from './Docs'
+import React from 'react';
+import PlayGround from './PlayGround';
+import Docs from './Docs';
 import CONFIG from '../../generated/config';
 
 const NAME_MAP = {
@@ -18,51 +18,59 @@ const NAME_MAP = {
 
 class App extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       converterType: 's2t.json',
       converter: null,
-    }
+    };
   }
 
   componentDidMount() {
-    this.changeConverter(this.state.converterType)
+    this.changeConverter(this.state.converterType);
   }
 
   changeConverter(type) {
-    const { ready, DictSource, Converter } = window.OpenCCWasm_
+    const { ready, DictSource, Converter } = window.OpenCCWasm_;
 
     if (this.state.converter) {
-      this.state.converter.delete()
+      this.state.converter.delete();
     }
 
     this.setState({
       converterType: type,
       converter: null,
-    })
+    });
 
-    ready().then(() => {
-      const dictSource = new DictSource(type)
+    ready()
+      .then(() => {
+        const dictSource = new DictSource(type);
 
-      return dictSource.get()
-    }).then((args) => {
-      const converter = new Converter(...args)
-
-      this.setState({
-        converterType: type,
-        converter,
+        return dictSource.get();
       })
-    }).catch(err => {
-      console.log('err', err)
-    })
+      .then(args => {
+        const converter = new Converter(...args);
+
+        this.setState({
+          converterType: type,
+          converter,
+        });
+      })
+      .catch(err => {
+        console.log('err', err);
+      });
   }
 
   render() {
-    const { converter, converterType } = this.state
+    const { converter, converterType } = this.state;
 
     return (
       <div>
+        <h1>
+          wasm-opencc开放中文转换（<a href="https://github.com/BYVoid/OpenCC">
+            OpenCC
+          </a>）wasm版本，可在浏览器中运行
+        </h1>
         <div>
           {Object.keys(CONFIG).map(name => (
             <button
@@ -79,7 +87,7 @@ class App extends React.Component {
                 textAlign: 'center',
                 borderColor: '#d9d9d9',
                 color: converterType === name ? '#FFF' : 'rgba(0, 0, 0, 0.65)',
-                background: converterType === name ? '#40a9ff' : 'white'
+                background: converterType === name ? '#40a9ff' : 'white',
               }}
             >
               {NAME_MAP[name]}
@@ -89,8 +97,8 @@ class App extends React.Component {
         <PlayGround converter={converter} />
         <Docs converter={converter} />
       </div>
-    )
+    );
   }
 }
 
-export default App
+export default App;

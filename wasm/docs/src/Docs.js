@@ -5,7 +5,9 @@ import readmeContent from './readmecontent'
 class Docs extends React.Component {
   render() {
     return (
-      <ReactMarkdown source={readmeContent}/>
+      <div style={{ width: 800, margin: '0 auto' }}>
+        <ReactMarkdown source={readmeContent}/>
+      </div>
     )
   }
 }
