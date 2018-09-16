@@ -5,7 +5,7 @@
   "author": "oyyd <oyydoibh@gmail.com>",
   "main": "lib/index.js",
   "scripts": {
-    "docs": "cp -r dist/ ./docs/ && cp node_modules/codemirror/lib/codemirror.css ./docs/ && babel docs/src/ --out-dir docs/lib && webpack --config docs/webpack.config.js && cp -r docs/ ../docs/",
+    "docs": "cp -r dist/ ./docs/ && cp node_modules/codemirror/lib/codemirror.css ./docs/ && babel docs/src/ --out-dir docs/lib && node docs/lib/build && webpack --config docs/webpack.config.js && cp -r docs/ ../docs/",
     "test": "jest",
     "generate": "node scripts/generate",
     "build_node": "babel src --out-dir lib",

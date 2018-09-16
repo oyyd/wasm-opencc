@@ -119,7 +119,16 @@ var App = function (_React$Component) {
 
       return _react2.default.createElement(
         'div',
-        null,
+        { style: { padding: '2px 24px', position: 'relative' } },
+        _react2.default.createElement(
+          'div',
+          { style: { position: 'absolute', top: '20px', right: '60px' } },
+          _react2.default.createElement(
+            'a',
+            { href: 'https://github.com/oyyd/wasm-opencc' },
+            'Github'
+          )
+        ),
         _react2.default.createElement(
           'h1',
           { style: { color: '#333', fontSize: '24px' } },

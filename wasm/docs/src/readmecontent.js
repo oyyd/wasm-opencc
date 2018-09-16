@@ -99,7 +99,7 @@ dictSource.setDictProxy((dictName) => {
   return Promise.resolve('僞\\t偽\\n')
 })
 
-dictSource.get() // 会调用
+dictSource.get() // 会调用proxy函数
 \`\`\`
 
 DictSource会给\`proxy\`函数传入所需要的字典名称，而\`proxy\`函数需要返回一个promise以告知DictSource请求结束或请求失败。成功的话需要resolve对应的字典数据内容，失败的话请reject一个\`Error\`对象。

@@ -73,7 +73,10 @@ class App extends React.Component {
     const { converter, converterType } = this.state;
 
     return (
-      <div>
+      <div style={{ padding: '2px 24px', position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '20px', right: '60px'}}>
+          <a href="https://github.com/oyyd/wasm-opencc">Github</a>
+        </div>
         <h1 style={{ color: '#333', fontSize: '24px'}}>
           <ConvertWhenPossible converter={converter} content="wasm-opencc开放中文转换" />（<a href="https://github.com/BYVoid/OpenCC">
             OpenCC
