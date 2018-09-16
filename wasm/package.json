@@ -1,6 +1,6 @@
 {
   "name": "wasm-opencc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "OpenCC compiled by Emscripten so that you can run it in browsers.",
   "author": "oyyd <oyydoibh@gmail.com>",
   "main": "lib/index.js",
@@ -12,11 +12,16 @@
     "build_browser": "webpack && node scripts/concat",
     "build": "npm run generate && npm run build_node && npm run build_browser"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oyyd/nysocks.git"
+  },
+  "homepage": "https://oyyd.github.io/wasm-opencc/",
   "files": [
     "generated",
-    "lib",
+    "lib/*.js",
     "package.json",
-    "../README.md"
+    "README.md"
   ],
   "license": "Apache-2.0",
   "devDependencies": {
