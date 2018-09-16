@@ -61,4 +61,24 @@ describe('DictSource', function () {
       });
     });
   });
+
+  it('should trigger catch when failing to get source', function (done) {
+    var sourceName = 's2t.json';
+    var dictSource = new DictSource(sourceName);
+    var called = 0;
+
+    dictSource.setDictProxy(function (name) {
+      return Promise.reject(new Error('fail'));
+    });
+
+    dictSource.get().then(function (_ref5) {
+      var _ref6 = _slicedToArray(_ref5, 2),
+          a = _ref6[0],
+          b = _ref6[1];
+
+      throw new Error();
+    }).catch(function (err) {
+      done();
+    });
+  });
 });

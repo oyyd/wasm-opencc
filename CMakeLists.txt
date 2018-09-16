@@ -110,6 +110,7 @@ if (EMSCRIPTEN)
   add_definitions(
     -s WASM=0
     -O3
+
   )
   # Enable Embind
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --bind")
@@ -117,6 +118,8 @@ if (EMSCRIPTEN)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s WASM=0")
   # Optimize js
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -O3")
+  # Allow to use more memories than set.
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
   # Show exception info
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s DISABLE_EXCEPTION_CATCHING=0")
 endif()
@@ -178,7 +181,7 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(doc)
-# add_subdirectory(data)
+add_subdirectory(data)
 add_subdirectory(test)
 
 ######## Testing

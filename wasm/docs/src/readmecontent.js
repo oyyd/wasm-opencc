@@ -1,4 +1,7 @@
-# wasm-opencc
+// TODO: generate this
+module.exports = `# wasm-opencc
+
+[![travis-ribbon](https://travis-ci.com/oyyd/wasm-opencc.svg?branch=master)](https://travis-ci.com/oyyd/wasm-opencc#)
 
 ## emscripten/wasm preferences
 
@@ -22,3 +25,4 @@ https://github.com/BYVoid/OpenCC#configurations-%E9%85%8D%E7%BD%AE%E6%96%87%E4%B
 ## License
 
 Apache 2.0
+`

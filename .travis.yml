@@ -5,7 +5,8 @@ node_js:
   - 10
   - 8
   - 6
-  - 4
+  # Jest don't support v4
+  # - 4
 
 os:
   - linux

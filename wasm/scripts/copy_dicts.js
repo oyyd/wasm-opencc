@@ -3,6 +3,7 @@ const path = require('path')
 const { DIR_FOLDER, getFilesInAFolder } = require('./merge_config')
 
 const DICT_PATH = path.resolve(__dirname, '../../data/dictionary')
+const BUILT_DICT_PATH = path.resolve(__dirname, '../../build/rel/data')
 const GENERATED_FOLDER = DIR_FOLDER
 const DIST_FOLDER = path.resolve(__dirname, '../dist')
 const DICT_NAME = 'dict'
@@ -31,8 +32,9 @@ async function copyFile(file, targetPath) {
   })
 }
 
-async function copyDicts() {
-  const files = await getFilesInAFolder(DICT_PATH)
+async function copyDicts_(dictPath) {
+  let files = await getFilesInAFolder(dictPath)
+  files = files.filter(i => path.extname(i) === '.txt')
 
   for (let i = 0; i < TARGET_FOLDERS.length; i += 1) {
     const folder = TARGET_FOLDERS[i]
@@ -41,12 +43,17 @@ async function copyDicts() {
 
   for (let i = 0; i < files.length; i += 1) {
     const file = files[i]
-    const srcFile = path.resolve(DICT_PATH, file)
+    const srcFile = path.resolve(dictPath, file)
     for (let j = 0; j < TARGET_FOLDERS.length; j += 1) {
       const folder = TARGET_FOLDERS[j]
       await copyFile(srcFile, path.resolve(folder, file))
     }
   }
+}
+
+async function copyDicts() {
+  await copyDicts_(DICT_PATH)
+  await copyDicts_(BUILT_DICT_PATH)
 }
 
 module.exports = {

@@ -118,5 +118,5 @@ endif()
 
 # Subdir
 
-# add_subdirectory(tools)
+add_subdirectory(tools)
 add_subdirectory(wasm)

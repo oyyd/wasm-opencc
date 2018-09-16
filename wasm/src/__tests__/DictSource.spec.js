@@ -46,4 +46,20 @@ describe('DictSource', () => {
       })
     })
   })
+
+  it('should trigger catch when failing to get source', (done) => {
+    const sourceName = 's2t.json'
+    const dictSource = new DictSource(sourceName)
+    let called = 0
+
+    dictSource.setDictProxy((name) => {
+      return Promise.reject(new Error('fail'))
+    })
+
+    dictSource.get().then(([a, b]) => {
+      throw new Error()
+    }).catch(err => {
+      done()
+    })
+  })
 })

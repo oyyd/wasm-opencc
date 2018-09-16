@@ -34,13 +34,15 @@ function getByFs(sourceName) {
 
 function getByFetch(sourceName) {
   return fetch(sourceName).then(function (res) {
-    return res.text();
+    if (res.ok) {
+      return res.text();
+    }
+
+    throw new Error('faield to fetch: ' + sourceName);
   });
 }
 
 function getSource(proxy, files, sourceName_) {
-  var sourceName = IS_NODE ? sourceName_ : 'dict/' + sourceName_;
-
   if (files[sourceName_]) {
     return files[sourceName_];
   }
@@ -48,11 +50,11 @@ function getSource(proxy, files, sourceName_) {
   var p = void 0;
 
   if (typeof proxy === 'function') {
-    p = proxy(sourceName);
+    p = proxy(sourceName_);
   } else if (IS_NODE) {
-    p = getByFs(sourceName);
+    p = getByFs(sourceName_);
   } else {
-    p = getByFetch(sourceName);
+    p = getByFetch('dict/' + sourceName_);
   }
 
   files[sourceName_] = p;
@@ -105,10 +107,20 @@ var DictSource = function () {
 
         var files = {};
         var tasks = [];
+        var error = null;
 
-        var getSegmentation = getSource(proxy, files, segmentation).then(function (str) {
+        var setError = function setError(p) {
+          p.catch(function (e) {
+            console.log('catch', e);
+            error = e;
+          });
+
+          return p;
+        };
+
+        var getSegmentation = setError(getSource(proxy, files, segmentation).then(function (str) {
           segmentationString = str;
-        });
+        }));
 
         tasks.push(getSegmentation);
 
@@ -119,24 +131,26 @@ var DictSource = function () {
             convertionStrings.push(list);
 
             item.forEach(function (source) {
-              var p = getSource(proxy, files, source).then(function (str) {
+              var p = setError(getSource(proxy, files, source).then(function (str) {
                 list.push(str);
-              });
+              }));
               tasks.push(p);
             });
             return;
           }
 
-          var p = getSource(proxy, files, item).then(function (str) {
+          var p = setError(getSource(proxy, files, item).then(function (str) {
             convertionStrings.push(str);
-          });
+          }));
           tasks.push(p);
         });
 
         Promise.all(tasks).then(function () {
+          if (error) {
+            reject(new Error('DictSource.get failed: ' + error.message));
+            return;
+          }
           resolve([segmentationString, convertionStrings]);
-        }).catch(function (err) {
-          reject(err);
         });
       });
     }

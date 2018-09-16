@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const { writeFile, getFile, mergeConfig, DIR_FOLDER } = require('./merge_config')
-const { ensureDir, copyFile, DIST_FOLDER } = require('./copy_dicts')
+const { copyDicts, ensureDir, copyFile, DIST_FOLDER } = require('./copy_dicts')
 const { JS_FILE_NAME, concatFile } = require('./concat')
 const { EMBIND_MODULE_NAME, NAME_ON_WINDOW } = require('../src/Module')
 
@@ -46,6 +46,7 @@ async function copyMemFile() {
 
 async function main() {
   await ensureDir(DIR_FOLDER)
+  await copyDicts()
   await mergeConfig()
   await copyBuiltFiles()
   await wrapASMFile()

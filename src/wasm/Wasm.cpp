@@ -45,7 +45,7 @@ public:
     converter.reset();
   }
 
-  void PushSegmentation(std::string text) {
+  void PushSegmentation(const std::string& text) {
     textDictList.push_back(CreateTextDict(text));
   }
 
@@ -68,7 +68,7 @@ public:
     convertionDictList.clear();
   }
 
-  void PushConversion(std::string text) {
+  void PushConversion(const std::string& text) {
     convertionDictList.push_back(this->CreateTextDict(text));
   }
 
@@ -93,7 +93,7 @@ public:
     converter = ConverterPtr(new Converter(name, segmentation, chain));
   }
 
-  std::string Convert(std::string text) {
+  std::string Convert(const std::string& text) {
     if (!converter) {
       throw std::runtime_error(
           "You need `Wasm.CreateConverter` before 'Wasm.Convert'.");
@@ -109,7 +109,7 @@ private:
 
   // TODO: Errors here won't be catched.
   // TODO: Test this.
-  LexiconPtr CreateDictFromString(std::string& text) {
+  LexiconPtr CreateDictFromString(const std::string& text) {
     const int ENTRY_BUFF_SIZE = 4096;
 
     LexiconPtr lexicon(new Lexicon);
@@ -131,7 +131,7 @@ private:
     return lexicon;
   }
 
-  DictPtr CreateTextDict(std::string& text) {
+  DictPtr CreateTextDict(const std::string& text) {
     LexiconPtr lex = this->CreateDictFromString(text);
     TextDict* textDict = new TextDict(lex);
     return TextDictPtr(textDict);

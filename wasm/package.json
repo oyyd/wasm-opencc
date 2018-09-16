@@ -6,12 +6,13 @@
   "author": "oyyd <oyydoibh@gmail.com>",
   "main": "lib/index.js",
   "scripts": {
+    "docs":
+      "cp -r dist/ ./docs/ && cp node_modules/codemirror/lib/codemirror.css ./docs/ && webpack --config docs/webpack.config.js",
     "test": "jest",
     "generate": "node scripts/generate",
     "build_node": "babel src --out-dir lib",
     "build_browser": "webpack && node scripts/concat",
-    "build":
-      "npm run generate && npm run build_node && npm run build_browser"
+    "build": "npm run generate && npm run build_node && npm run build_browser"
   },
   "files": ["generated", "lib", "package.json", "README.md"],
   "license": "Apache-2.0",
@@ -21,8 +22,14 @@
     "babel-jest": "^23.6.0",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "codemirror": "^5.40.0",
     "imports-loader": "^0.8.0",
     "jest": "^23.6.0",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
+    "react-dom-server": "0.0.5",
+    "react-markdown": "^3.6.0",
     "uglifyjs-webpack-plugin": "^2.0.0",
     "webpack": "^4.19.0",
     "webpack-cli": "^3.1.0"
@@ -43,9 +50,7 @@
     }
   },
   "jest": {
-    "transformIgnorePatterns": [
-      "opencc-asm"
-    ],
+    "transformIgnorePatterns": ["opencc-asm"],
     "verbose": true,
     "testMatch": ["**/src/**/__tests__/**/*.spec.js"]
   }

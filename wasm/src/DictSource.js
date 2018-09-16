@@ -24,13 +24,15 @@ function getByFs(sourceName) {
 
 function getByFetch(sourceName) {
   return fetch(sourceName).then(res => {
-    return res.text()
+    if (res.ok) {
+      return res.text()
+    }
+
+    throw new Error(`faield to fetch: ${sourceName}`)
   })
 }
 
 function getSource(proxy, files, sourceName_) {
-  const sourceName = IS_NODE ? sourceName_ : `dict/${sourceName_}`
-
   if (files[sourceName_]) {
     return files[sourceName_]
   }
@@ -38,11 +40,11 @@ function getSource(proxy, files, sourceName_) {
   let p
 
   if (typeof proxy === 'function') {
-    p = proxy(sourceName)
+    p = proxy(sourceName_)
   } else if (IS_NODE) {
-    p = getByFs(sourceName)
+    p = getByFs(sourceName_)
   } else {
-    p = getByFetch(sourceName)
+    p = getByFetch(`dict/${sourceName_}`)
   }
 
   files[sourceName_] = p
@@ -80,10 +82,20 @@ class DictSource {
       // TODO: refactor
       const files = {}
       const tasks = []
+      let error = null
 
-      const getSegmentation = getSource(proxy, files, segmentation).then(str => {
+      const setError = (p) => {
+        p.catch(e => {
+          console.log('catch', e)
+          error = e
+        })
+
+        return p
+      }
+
+      const getSegmentation = setError(getSource(proxy, files, segmentation).then(str => {
         segmentationString = str
-      })
+      }))
 
       tasks.push(getSegmentation)
 
@@ -94,28 +106,30 @@ class DictSource {
           convertionStrings.push(list)
 
           item.forEach(source => {
-            const p = getSource(proxy, files, source).then(str => {
+            const p = setError(getSource(proxy, files, source).then(str => {
               list.push(str)
-            })
+            }))
             tasks.push(p)
           })
           return
         }
 
-        const p = getSource(proxy, files, item).then(str => {
+        const p = setError(getSource(proxy, files, item).then(str => {
           convertionStrings.push(str)
-        })
+        }))
         tasks.push(p)
       })
 
 
       Promise.all(tasks).then(() => {
+        if (error) {
+          reject(new Error(`DictSource.get failed: ${error.message}`))
+          return
+        }
         resolve([
           segmentationString,
           convertionStrings,
         ])
-      }).catch(err => {
-        reject(err)
       })
     })
   }
