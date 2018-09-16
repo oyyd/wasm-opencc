@@ -12,4 +12,7 @@
 /xcode
 /node_modules
 
+wasm/lib
+wasm/docs/lib
+
 test.my
