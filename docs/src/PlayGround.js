@@ -1,5 +1,10 @@
 import React from 'react';
-import CodeMirror from 'codemirror';
+
+let CodeMirror = null
+
+if (process.browser) {
+  CodeMirror = require('codemirror');
+}
 
 const DEFAULT_CONTENT =
   '中文简繁转换开源项目，支持词汇级别的转换、异体字转换和地区习惯用词转换（中国大陆、台湾、香港）。 Features 特点 严格区分「一简对多繁」和「一简对多异」。 完全兼容异体字，可以实现动态替换。 严格审校一简对多繁词条，原则为「能分则不合」。 支持中国大陆、台湾、香港异体字和地区习惯用词转换，如「里」「里」、「鼠标」「滑鼠」。 词库和函数库完全分离，可以自由修改、导入、扩展。 支持C、C++、Python、PHP、Java、Ruby、Node.js and Android。 兼容Windows、Linux、Mac平台。';

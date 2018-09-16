@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import PlayGround from './PlayGround';
 import Docs from './Docs';
 import CONFIG from '../../generated/config';
@@ -15,6 +15,14 @@ const NAME_MAP = {
   't2tw.json': '繁體（OpenCC 標準）到臺灣正體',
   't2hk.json': '繁體（OpenCC 標準）到香港繁體（香港小學學習字詞表標準）',
 };
+
+
+function ConvertWhenPossible(props) {
+  if (props.converter) {
+    return props.converter.convert(props.content)
+  }
+  return props.content
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -67,9 +75,9 @@ class App extends React.Component {
     return (
       <div>
         <h1 style={{ color: '#333', fontSize: '24px'}}>
-          wasm-opencc开放中文转换（<a href="https://github.com/BYVoid/OpenCC">
+          <ConvertWhenPossible converter={converter} content="wasm-opencc开放中文转换" />（<a href="https://github.com/BYVoid/OpenCC">
             OpenCC
-          </a>）wasm版本
+          </a>）<ConvertWhenPossible converter={converter} content="wasm版本" />
         </h1>
         <div>
           {Object.keys(CONFIG).map(name => (
@@ -90,7 +98,7 @@ class App extends React.Component {
                 background: converterType === name ? '#40a9ff' : 'white',
               }}
             >
-              {NAME_MAP[name]}
+              <ConvertWhenPossible content={NAME_MAP[name]} converter={converter} />
             </button>
           ))}
         </div>

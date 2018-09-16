@@ -160,16 +160,6 @@ cd wasm && npm run docs
 cd wasm && npm run test
 ```
 
-## 闲谈
-
-OpenCC很好，但遗憾的是我们必须开个服务才能使用，而我先前一直想在浏览器上直接运行，对页面的文本直接进行转换。而后发现[tesseract.js](https://github.com/naptha/tesseract.js)是使用Emscripten编译而成，对wasm相关技术的成熟度感到意外，遂有了这个项目。
-
-一开始我没有打算提供node版本的代码，因为@byvoid自己早就做了addon的版本。但后来想到自己在[nysocks](https://github.com/oyyd/nysocks)上经历过的问题，深知addon在维护和部署上的困难，遂一并生成了一份在node运行的版本。
-
-**那么现在Emscripten/WebAssembly是否足够成熟了呢？** 如果你期望的是开箱即用，文档社区齐全，不会碰到太多问题的工具的话，我的想法是没有；但如果你愿意投入时间去解决你会碰到的问题，并且认为WebAssembly本身要解决的问题并不容易的话，我觉得你在使用Emscripten的过程中会觉得它比你使用前所想象的更加成熟一些。而WebAssembly最大的优势诚如其文档所言，你可以直接将生成llvm的项目运行在js环境下。
-
-另外一直听闻Rust社区在WebAssembly这一领域上有所作为。
-
 ## License
 
 这个项目在OpenCC的基础上添加了`/src/wasm`文件夹下的代码。原项目中多个文件夹下的CMakeLists.txt都被进行了一定程度上的修改。wasm相关的js代码主要放在`/wasm`文件夹下，为新增代码。`/docs`中的代码用于gh-pages展现文档。
