@@ -7,7 +7,7 @@
   "main": "lib/index.js",
   "scripts": {
     "docs":
-      "cp -r dist/ ./docs/ && cp node_modules/codemirror/lib/codemirror.css ./docs/ && webpack --config docs/webpack.config.js",
+      "cp -r dist/ ./docs/ && cp node_modules/codemirror/lib/codemirror.css ./docs/ && webpack --config docs/webpack.config.js && cp -r docs/ ../docs/",
     "test": "jest",
     "generate": "node scripts/generate",
     "build_node": "babel src --out-dir lib",
