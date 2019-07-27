@@ -67,7 +67,7 @@ class DictSource {
       throw new Error('setDictProxy expect a function or null argument')
     }
 
-    this.proxy
+    this.proxy = proxy
   }
 
   get() {
